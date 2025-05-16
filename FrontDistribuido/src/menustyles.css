@@ -1,0 +1,52 @@
+.container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .input {
+    padding: 0.5rem;
+    flex: 1;
+  }
+  
+  .select {
+    padding: 0.5rem;
+  }
+  
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  
+  .card {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 1rem;
+  }
+  
+  .card h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  
+  .card p {
+    margin: 0.25rem 0;
+  }
+  
+  .card img {
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    max-width: 100%;
+  }
+  
