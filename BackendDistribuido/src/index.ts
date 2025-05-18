@@ -7,7 +7,8 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use('/api', menuRoutes);
+
+app.use('/api', menuRoutes); // 👈 solo esto, no llames router.post aquí directamente
 
 app.listen(PORT, () => {
   console.log(`✅ Backend corriendo en http://localhost:${PORT}`);
