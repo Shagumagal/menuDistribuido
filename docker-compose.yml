@@ -1,0 +1,38 @@
+services:
+  backend:
+    build: ./BackendDistribuido
+    container_name: backend-menu
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgresql://postgres:admin@db:5432/menu_db
+    volumes:
+      - ./BackendDistribuido:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./FrontDistribuido
+    container_name: frontend-menu
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    container_name: db-menu
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: menu_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:

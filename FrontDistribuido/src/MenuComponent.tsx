@@ -12,7 +12,11 @@ interface MenuItem {
   disponible: boolean;
 }
 
-const MenuComponent: React.FC = () => {
+interface Props {
+  onEdit: (item: MenuItem) => void;
+}
+
+const MenuComponent: React.FC<Props> = ({ onEdit }) => {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<MenuItem[]>([]);
   const [search, setSearch] = useState('');
@@ -24,7 +28,6 @@ const MenuComponent: React.FC = () => {
     axios
       .get<MenuItem[]>('http://localhost:3000/api/menu')
       .then(res => {
-        console.log('✅ Menú recibido:', res.data);
         setMenuItems(res.data);
         setFilteredItems(res.data);
         setLoading(false);
@@ -67,7 +70,7 @@ const MenuComponent: React.FC = () => {
             <select
               value={category}
               onChange={e => setCategory(e.target.value)}
-              className="select"
+              className="input"
             >
               <option value="">Todas las categorías</option>
               {categories.map((cat, idx) => (
@@ -91,6 +94,7 @@ const MenuComponent: React.FC = () => {
                   </p>
                   {item.imagen && <img src={item.imagen} alt={item.nombre} />}
                   <p>{item.disponible ? 'Disponible' : 'No disponible'}</p>
+                  <button className="button" onClick={() => onEdit(item)}>Editar</button>
                 </div>
               ))
             )}
@@ -102,3 +106,4 @@ const MenuComponent: React.FC = () => {
 };
 
 export default MenuComponent;
+
