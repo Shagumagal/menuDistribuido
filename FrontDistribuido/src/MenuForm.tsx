@@ -62,10 +62,10 @@ const MenuForm: React.FC<Props> = ({ onSuccess, item }) => {
 
     try {
       if (item) {
-        await axios.put(`http://localhost:3000/api/menu/${item.id}`, data);
+        await axios.put(`/api/menu/${item.id}`, data);
         setMensaje('✅ Platillo actualizado.');
       } else {
-        await axios.post('http://localhost:3000/api/menu', data);
+        await axios.post('/api/menu', data);
         setMensaje('✅ Platillo registrado.');
       }
       onSuccess();

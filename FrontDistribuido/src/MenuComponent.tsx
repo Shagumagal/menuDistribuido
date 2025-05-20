@@ -26,7 +26,7 @@ const MenuComponent: React.FC<Props> = ({ onEdit }) => {
 
   useEffect(() => {
     axios
-      .get<MenuItem[]>('http://localhost:3000/api/menu')
+      .get<MenuItem[]>('/api/menu')
       .then(res => {
         setMenuItems(res.data);
         setFilteredItems(res.data);
@@ -47,6 +47,26 @@ const MenuComponent: React.FC<Props> = ({ onEdit }) => {
     });
     setFilteredItems(filtered);
   }, [search, category, menuItems]);
+
+  const marcarNoDisponible = async (id: number) => {
+  try {
+    const item = menuItems.find(p => p.id === id);
+    if (!item) return;
+
+    const updated = {
+      ...item,
+      disponible: false
+    };
+
+    await axios.put(`/api/menu/${id}`, updated);
+
+    const res = await axios.get<MenuItem[]>('/api/menu');
+    setMenuItems(res.data);
+  } catch (error) {
+    console.error("Error al marcar como no disponible:", error);
+  }
+};
+
 
   const categories = Array.from(new Set(menuItems.map(item => item.categoria).filter(Boolean)));
 
@@ -86,15 +106,24 @@ const MenuComponent: React.FC<Props> = ({ onEdit }) => {
               <p>No hay platillos disponibles.</p>
             ) : (
               filteredItems.map(item => (
-                <div key={item.id} className="card">
+                <div
+                  key={item.id}
+                  className={`card ${!item.disponible ? 'no-disponible' : ''}`}
+                >
                   <h2>{item.nombre}</h2>
                   <p>{item.descripcion}</p>
-                  <p>
-                    <strong>${Number(item.precio).toFixed(2)}</strong>
-                  </p>
+                  <p><strong>${Number(item.precio).toFixed(2)}</strong></p>
                   {item.imagen && <img src={item.imagen} alt={item.nombre} />}
                   <p>{item.disponible ? 'Disponible' : 'No disponible'}</p>
                   <button className="button" onClick={() => onEdit(item)}>Editar</button>
+                  {item.disponible && (
+                    <button
+                      className="button"
+                      onClick={() => marcarNoDisponible(item.id)}
+                    >
+                      Marcar como no disponible
+                    </button>
+                  )}
                 </div>
               ))
             )}
@@ -106,4 +135,3 @@ const MenuComponent: React.FC<Props> = ({ onEdit }) => {
 };
 
 export default MenuComponent;
-

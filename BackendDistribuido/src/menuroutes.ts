@@ -16,7 +16,8 @@ interface MenuBody {
 // Ruta GET: obtener todos los platillos disponibles
 router.get('/menu', async (req: Request, res: Response) => {
   try {
-    const result = await pool.query('SELECT * FROM menu WHERE disponible = true');
+    const result = await pool.query('SELECT * FROM menu');
+ //disponible Solo platillos disponibles
     res.json(result.rows);
   } catch (error) {
     console.error('Error al obtener menú:', error);
