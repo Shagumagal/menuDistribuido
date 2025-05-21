@@ -3,7 +3,7 @@ import { pool } from './db';
 
 const router = express.Router();
 
-// Definimos la estructura del cuerpo que esperamos en POST
+
 interface MenuBody {
   nombre: string;
   descripcion: string;
@@ -13,7 +13,7 @@ interface MenuBody {
   disponible: boolean;
 }
 
-// Ruta GET: obtener todos los platillos disponibles
+
 router.get('/menu', async (req: Request, res: Response) => {
   try {
     const result = await pool.query('SELECT * FROM menu');
