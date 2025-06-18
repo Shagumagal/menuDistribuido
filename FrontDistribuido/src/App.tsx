@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { UtensilsCrossed, Plus } from 'lucide-react';
+import { UtensilsCrossed, Plus, ClipboardList, Eye } from 'lucide-react';
 import MenuComponent from './MenuComponent';
 import MenuForm from './MenuForm';
+import PedidoForm from './PedidoForm';
+import VisualizarPedidos from './VisualizarPedidos';
 import './menustyles.css';
 
 interface MenuItem {
@@ -15,7 +17,7 @@ interface MenuItem {
 }
 
 const App: React.FC = () => {
-  const [vista, setVista] = useState<'menu' | 'registro' | 'editar'>('menu');
+  const [vista, setVista] = useState<'menu' | 'registro' | 'editar' | 'pedido' | 'verpedidos'>('menu');
   const [editItem, setEditItem] = useState<MenuItem | null>(null);
 
   const handleEdit = (item: MenuItem) => {
@@ -46,6 +48,18 @@ const App: React.FC = () => {
           >
             <Plus size={18} /> Registrar platillo
           </button>
+          <button
+            className={`nav-button ${vista === 'pedido' ? 'active' : ''}`}
+            onClick={() => setVista('pedido')}
+          >
+            <ClipboardList size={18} /> Pedido
+          </button>
+          <button
+            className={`nav-button ${vista === 'verpedidos' ? 'active' : ''}`}
+            onClick={() => setVista('verpedidos')}
+          >
+            <Eye size={18} /> Visualizar pedidos
+          </button>
         </nav>
       </aside>
 
@@ -58,6 +72,8 @@ const App: React.FC = () => {
             setVista('menu');
           }} />
         )}
+        {vista === 'pedido' && <PedidoForm />}
+        {vista === 'verpedidos' && <VisualizarPedidos />}
       </main>
     </div>
   );

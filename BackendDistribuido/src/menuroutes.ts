@@ -13,18 +13,22 @@ interface MenuBody {
   disponible: boolean;
 }
 
-// Ruta GET: obtener todos los platillos disponibles
+// ✅ US-017 y US-019: Obtener platillos disponibles, con orden asc/desc
 router.get('/menu', async (req: Request, res: Response) => {
+  const orden = req.query.orden?.toString().toLowerCase() === 'desc' ? 'DESC' : 'ASC';
+
   try {
-    const result = await pool.query('SELECT * FROM menu WHERE disponible = true');
+    const result = await pool.query(
+      `SELECT * FROM menu WHERE disponible = true ORDER BY precio ${orden}`
+    );
     res.json(result.rows);
   } catch (error) {
-    console.error('Error al obtener menú:', error);
-    res.status(500).json({ error: 'Error al obtener menú' });
+    console.error('Error al obtener menú ordenado:', error);
+    res.status(500).json({ error: 'Error al obtener menú ordenado' });
   }
 });
 
-// Handler separado para evitar errores de tipado en TypeScript
+// Ruta POST: registrar nuevo platillo (ya tenías esto)
 const handleCreateMenu = async (req: Request, res: Response) => {
   try {
     const { nombre, descripcion, precio, imagen, categoria, disponible } = req.body;
@@ -46,16 +50,10 @@ const handleCreateMenu = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error interno al registrar el platillo.' });
   }
 };
-
-// Ruta POST: registrar nuevo platillo
 router.post('/menu', handleCreateMenu);
-// Ruta PUT: actualizar un platillo existente
-// Actualizar platillo existente
-// Handler para actualizar platillo
-const handleUpdateMenu = async (
-  req: Request,
-  res: Response
-) => {
+
+// Ruta PUT: actualizar platillo existente (ya la tenías)
+const handleUpdateMenu = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { nombre, descripcion, precio, imagen, categoria, disponible } = req.body;
@@ -85,4 +83,27 @@ const handleUpdateMenu = async (
   }
 };
 router.put('/menu/:id', handleUpdateMenu);
+
+// ✅ US-018: desactivar platillo (marcar como no disponible)
+router.put('/menu/:id/desactivar', async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query(
+      'UPDATE menu SET disponible = false WHERE id = $1 RETURNING *',
+      [id]
+    );
+
+    if (result.rowCount === 0) {
+      res.status(404).json({ error: 'Platillo no encontrado para desactivar.' });
+      return;
+    }
+
+    res.json({ message: 'Platillo desactivado', platillo: result.rows[0] });
+  } catch (error) {
+    console.error('Error al desactivar platillo:', error);
+    res.status(500).json({ error: 'Error interno al desactivar el platillo.' });
+  }
+});
+
 export default router;

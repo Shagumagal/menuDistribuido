@@ -1,7 +1,6 @@
 services:
   backend:
     build: ./BackendDistribuido
-    container_name: backend-menu
     ports:
       - "3000:3000"
     depends_on:
@@ -12,18 +11,36 @@ services:
       - ./BackendDistribuido:/app
     restart: unless-stopped
 
+  backend-pedidos:
+    build: ./BackendDistribuido/Pedidos-Backend
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db-pedidos
+    environment:
+      POSTGRES_DB: pedidos_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      DB_HOST: db-pedidos
+      DB_PORT: 5432
+    volumes:
+      - ./BackendDistribuido/Pedidos-Backend:/app
+    restart: unless-stopped
+
   frontend:
     build: ./FrontDistribuido
-    container_name: frontend-menu
     ports:
       - "80:80"
     depends_on:
       - backend
+      - backend-pedidos
     restart: unless-stopped
 
   db:
     image: postgres:15
-    container_name: db-menu
     ports:
       - "5432:5432"
     environment:
@@ -34,5 +51,18 @@ services:
       - pgdata:/var/lib/postgresql/data
     restart: unless-stopped
 
+  db-pedidos:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pedidos_db
+    volumes:
+      - pgdata_pedidos:/var/lib/postgresql/data
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  pgdata_pedidos:

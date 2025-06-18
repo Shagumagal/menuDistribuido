@@ -1,0 +1,21 @@
+# Node & build output
+node_modules
+dist
+
+# Logs & archivos locales
+*.log
+.env
+vite-env.d.ts
+
+# IDEs y Git
+.vscode
+.idea
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose.yml
+
+# Otros
+README.md
